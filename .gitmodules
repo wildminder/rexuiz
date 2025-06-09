@@ -3,10 +3,10 @@
 	url = https://github.com/kasymovga/1vs1
 [submodule "DarkPlacesRM"]
 	path = DarkPlacesRM
-	url = https://github.com/kasymovga/DarkPlacesRM
+	url = https://github.com/wildminder/DarkPlacesRM
 [submodule "rexdlc"]
 	path = rexdlc
-	url = https://github.com/kasymovga/rexdlc
+	url = https://github.com/wildminder/rexuiz-rexdlc
 [submodule "gmqcc"]
 	path = gmqcc
 	url = https://github.com/wildminder/gmqcc
