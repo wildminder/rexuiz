@@ -228,8 +228,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-*   The original developers of Nexuiz Classic at AlienTrap.
-*   The original developer is https://github.com/kasymovga/rexuiz
+*   The original developer of this project is https://github.com/kasymovga/rexuiz
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
