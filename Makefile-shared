@@ -2,8 +2,8 @@
 PWD=$(shell pwd)
 
 DPDIR=DarkPlacesRM
-STATIC_CLIB=-static-libgcc
-STATIC_CXXLIB=-static-libstdc++
+STATIC_CLIB=
+STATIC_CXXLIB=
 
 ifneq ($(CROSSPREFIX),)
 CC=$(CROSSPREFIX)-gcc
@@ -62,80 +62,76 @@ LIBDIR=$(PWD)/libs/$(DPTARGET)/$(ANDROID_ARCH)/
 else
 LIBDIR=$(PWD)/libs/$(DPTARGET)/
 endif
-
 LIBSAMPLERATEVERSION=0.2.2
 LIBSAMPLERATEDIR=libsamplerate-$(LIBSAMPLERATEVERSION)
 LIBSAMPLERATETARXZ=$(LIBSAMPLERATEDIR).tar.xz
+ifeq ($(DPTARGET_WIN),y)
+LIBSAMPLERATEFILES=$(LIBDIR)/bin/libsamplerate-0.dll
+LIBPNGFILES=$(LIBDIR)/bin/libpng16-16.dll
+ZLIBFILES=$(LIBDIR)/bin/zlib1.dll
+JPEGFILES=$(LIBDIR)/bin/libjpeg-62.dll
+else
 LIBSAMPLERATEFILES=$(LIBDIR)/lib/libsamplerate.a
-
+LIBPNGFILES=$(LIBDIR)/lib/libpng.a $(LIBDIR)/lib/libpng16.a
+ZLIBFILES=$(LIBDIR)/lib/libz.a
+JPEGFILES=$(LIBDIR)/lib/libjpeg.a
+endif
 LIBPNGVERSION=1.6.48
 LIBPNGDIR=libpng-$(LIBPNGVERSION)
 LIBPNGTARGZ=$(LIBPNGDIR).tar.gz
-LIBPNGFILES=$(LIBDIR)/lib/libpng.a $(LIBDIR)/lib/libpng16.a
 LIBPNGFILES_FLRL=$(LIBDIR_FLRL)/lib/libpng.a $(LIBDIR_FLRL)/lib/libpng16.a
-
 ZLIBDIR=zlib-1.3.1
 ZLIBTARGZ=$(ZLIBDIR).tar.gz
-ZLIBFILES=$(LIBDIR)/lib/libz.a
 ZLIBFILES_FLRL=$(LIBDIR_FLRL)/lib/libz.a
-
 JPEGVERSION=9f
 JPEGTARGZ=jpegsrc.v$(JPEGVERSION).tar.gz
 JPEGDIR=jpeg-$(JPEGVERSION)
-JPEGFILES=$(LIBDIR)/lib/libjpeg.a
 JPEGFILES_FLRL=$(LIBDIR_FLRL)/lib/libjpeg.a
-
 ASSIMPVERSION=6.0.1
 ASSIMPDIR=assimp-$(ASSIMPVERSION)
 ASSIMPTARGZ=$(ASSIMPDIR).tar.gz
-
 ifeq ($(DPTARGET),android)
 SDLDIR=SDL2-2.0.16
 else
 SDLDIR=SDL2-2.26.5
 endif
 SDLTARGZ=$(SDLDIR).tar.gz
-
-ifeq ($(DPTARGET),android)
-HIDAPIFILES=$(LIBDIR)/lib/libhidapi.so
-SDLFILES=$(LIBDIR)/lib/libSDL2.so
+ifeq ($(DPTARGET_WIN),y)
+SDLFILES=$(LIBDIR)/bin/SDL2.dll
 else
 SDLFILES=$(LIBDIR)/bin/sdl2-config
 endif
-
 LIBMICROHTTPDFILES=$(LIBDIR)/lib/libmicrohttpd.a
-
-FREETYPEVERSION=2.13.3
-FREETYPEDIR=freetype-$(FREETYPEVERSION)
+FREETYPEDIR=freetype-2.13.3
 FREETYPETARGZ=$(FREETYPEDIR).tar.gz
-
-CURLVERSION=8.14.0
-CURLDIR=curl-$(CURLVERSION)
+CURLDIR=curl-8.14.0
 CURLTARGZ=$(CURLDIR).tar.gz
-
 LIBOGGVERSION=1.3.5
 LIBOGGDIR=libogg-$(LIBOGGVERSION)
 LIBOGGTARGZ=$(LIBOGGDIR).tar.gz
+ifeq ($(DPTARGET_WIN),y)
+LIBOGGFILES=$(LIBDIR)/bin/libogg-0.dll
+else
 LIBOGGFILES=$(LIBDIR)/lib/libogg.a
-
+endif
 LIBVORBISVERSION=1.3.7
 LIBVORBISDIR=libvorbis-$(LIBVORBISVERSION)
 LIBVORBISTARGZ=$(LIBVORBISDIR).tar.gz
+ifeq ($(DPTARGET_WIN),y)
+LIBVORBISFILES=$(LIBDIR)/bin/libvorbis-0.dll $(LIBDIR)/bin/libvorbisenc-2.dll $(LIBDIR)/bin/libvorbisfile-3.dll
+else
 LIBVORBISFILES=$(LIBDIR)/lib/libvorbis.a $(LIBDIR)/lib/libvorbisenc.a $(LIBDIR)/lib/libvorbisfile.a
-
+endif
 LIBTHEORAVERSION=1.2.0
 LIBTHEORADIR=libtheora-$(LIBTHEORAVERSION)
 LIBTHEORATARGZ=$(LIBTHEORADIR).tar.gz
 LIBTHEORAFILES=$(LIBDIR)/lib/libtheora.a $(LIBDIR)/lib/libtheoraenc.a
-
 LIBMICROHTTPDVERSION=1.0.1
 LIBMICROHTTPDDIR=libmicrohttpd-$(LIBMICROHTTPDVERSION)
 LIBMICROHTTPDTARGZ=$(LIBMICROHTTPDDIR).tar.gz
-
 MBEDTLSVERSION=3.6.3.1
 MBEDTLSDIR=mbedtls-$(MBEDTLSVERSION)
 MBEDTLSTARGZ=$(MBEDTLSDIR).tar.gz
-
 FLTKVERSION=1.4.3
 FLTKDIR=fltk-release-$(FLTKVERSION)
 FLTKTARGZ=$(FLTKDIR)-sources.tar.gz
@@ -143,15 +139,20 @@ FLTKTARGZ=$(FLTKDIR)-sources.tar.gz
 LIBVPXVERSION=1.15.1
 LIBVPXDIR=libvpx-$(LIBVPXVERSION)
 LIBVPXTARGZ=$(LIBVPXDIR).tar.gz
+
 LIBVPXFILES=$(LIBDIR)/lib/libvpx.a
 
 OPUSVERSION=1.5.2
 OPUSDIR=opus-$(OPUSVERSION)
 OPUSTARGZ=$(OPUSDIR).tar.gz
+ifeq ($(DPTARGET_WIN),y)
+OPUSFILES=$(LIBDIR)/bin/libopus-0.dll
+else
 OPUSFILES=$(LIBDIR)/lib/libopus.a
+endif
 
-DPMAKEOPTS=CC='$(CC) -I$(LIBDIR)/include/SDL2 -I$(LIBDIR)/include -L$(LIBDIR)/lib' LD='$(CC) -L$(LIBDIR)/lib' STRIP=$(STRIP) DP_LINK_ZLIB=shared DP_LINK_JPEG=shared DP_LINK_PNG=shared SDL_CONFIG='$(LIBDIR)/bin/sdl2-config' DP_LIBMICROHTTPD=static DP_LINK_OGGVORBIS=static DP_LINK_ZLIB=static DP_LINK_JPEG=static DP_LINK_PNG=static DP_LINK_OPUS=static WINDRES=$(WINDRES) $(DPMAKEOPTS_EXTRA)
 
+DPMAKEOPTS=CC='$(CC) -I$(LIBDIR)/include/SDL2 -I$(LIBDIR)/include -L$(LIBDIR)/lib' LD='$(CC) -L$(LIBDIR)/lib' STRIP=$(STRIP) DP_LINK_ZLIB=shared DP_LINK_JPEG=shared DP_LINK_PNG=shared SDL_CONFIG='$(LIBDIR)/bin/sdl2-config' DP_LIBMICROHTTPD=shared DP_LINK_OGGVORBIS=shared DP_LINK_ZLIB=shared DP_LINK_JPEG=shared DP_LINK_PNG=shared DP_LINK_OPUS=shared WINDRES=$(WINDRES) $(DPMAKEOPTS_EXTRA)
 ifeq ($(DPTARGET),android)
 DPMAKEOPTS:=$(DPMAKEOPTS) DP_SDL_STATIC=yes
 else
@@ -217,7 +218,22 @@ ifeq ($(ASSIMP_ENABLE),y)
 ASSIMPFILES=$(LIBDIR)/bin/libassimp-5.dll
 endif
 CURLFILES=$(LIBDIR)/bin/libcurl-4.dll
-EXTRALIBS=$(FREETYPEFILES) $(CURLFILES) $(ASSIMPFILES)
+# (WIN64): Define variables for all new DLLs that will be created.
+ZLIB_DLL=$(LIBDIR)/bin/zlib1.dll
+LIBPNG_DLL=$(LIBDIR)/bin/libpng16-16.dll
+JPEG_DLL=$(LIBDIR)/bin/libjpeg-62.dll
+SDL2_DLL=$(LIBDIR)/bin/SDL2.dll
+LIBSAMPLERATE_DLL=$(LIBDIR)/bin/libsamplerate-0.dll
+LIBOGG_DLL=$(LIBDIR)/bin/libogg-0.dll
+LIBVORBIS_DLL=$(LIBDIR)/bin/libvorbis-0.dll
+LIBVORBISENC_DLL=$(LIBDIR)/bin/libvorbisenc-2.dll
+LIBVORBISFILE_DLL=$(LIBDIR)/bin/libvorbisfile-3.dll
+LIBVPX_DLL=$(LIBDIR)/bin/libvpx.dll
+OPUS_DLL=$(LIBDIR)/bin/libopus-0.dll
+MICROHTTPD_DLL=$(LIBDIR)/bin/libmicrohttpd.dll
+# MODIFICATION: Removed LIBVPX_DLL from this list as it won't be created.
+ALL_DLLS=$(FREETYPEFILES) $(CURLFILES) $(ASSIMPFILES) $(ZLIB_DLL) $(LIBPNG_DLL) $(JPEG_DLL) $(SDL2_DLL) $(LIBSAMPLERATE_DLL) $(LIBOGG_DLL) $(LIBVORBIS_DLL) $(LIBVORBISENC_DLL) $(LIBVORBISFILE_DLL) $(OPUS_DLL) $(MICROHTTPD_DLL)
+EXTRALIBS=$(ALL_DLLS)
 else
 ifeq ($(DPTARGET_MAC),y)
 DPMAKEOPTS:=$(DPMAKEOPTS) DP_MAKE_TARGET=macosx
@@ -323,26 +339,28 @@ $(LIBVPXTARGZ):
 	wget -O temp_$@ https://github.com/webmproject/libvpx/archive/refs/tags/v$(LIBVPXVERSION).tar.gz
 	mv temp_$@ $@
 
+# (WIN64): Build SHARED library instead of STATIC
 $(LIBPNGFILES): $(LIBPNGTARGZ) $(ZLIBFILES)
 	rm -rf $(LIBPNGDIR)
 	tar xzf $(LIBPNGTARGZ)
-	cd $(LIBPNGDIR) && CC="$(CC) -I$(LIBDIR)/include -L$(LIBDIR)/lib" CFLAGS="-I$(LIBDIR)/include" LDFLAGS="-L$(LIBDIR)/lib" ./configure --host=$(CROSSPREFIX) --disable-shared --enable-static --prefix=$(LIBDIR) && make && make install
+	cd $(LIBPNGDIR) && CC="$(CC) -I$(LIBDIR)/include -L$(LIBDIR)/lib" CFLAGS="-I$(LIBDIR)/include" LDFLAGS="-L$(LIBDIR)/lib" ./configure --host=$(CROSSPREFIX) --enable-shared --disable-static --prefix=$(LIBDIR) && make && make install
 
 $(LIBPNGFILES_FLRL): $(LIBPNGTARGZ) $(ZLIBFILES_FLRL)
 	rm -rf $(LIBPNGDIR)
 	tar xzf $(LIBPNGTARGZ)
 	cd $(LIBPNGDIR) && CC="$(CC) -I$(LIBDIR_FLRL)/include -L$(LIBDIR_FLRL)/lib" CFLAGS="-I$(LIBDIR_FLRL)/include" LDFLAGS="-L$(LIBDIR_FLRL)/lib" ./configure --host=$(CROSSPREFIX) --disable-shared --enable-static --prefix=$(LIBDIR_FLRL) && make && make install
 
+# (WIN64): Build SHARED library instead of STATIC
 $(LIBSAMPLERATEFILES): $(LIBSAMPLERATETARXZ)
 	tar xJf $(LIBSAMPLERATETARXZ)
-	cd $(LIBSAMPLERATEDIR) && CFLAGS="-std=c99" ./configure --host=$(CROSSPREFIX) --disable-sndfile --disable-alsa --disable-fftw --disable-shared --enable-static --prefix=$(LIBDIR) && make && make install
+	cd $(LIBSAMPLERATEDIR) && CFLAGS="-std=c99" ./configure --host=$(CROSSPREFIX) --disable-sndfile --disable-alsa --disable-fftw --enable-shared --disable-static --prefix=$(LIBDIR) && make && make install
 
+# (WIN64): Build SHARED library instead of STATIC
 $(ZLIBFILES): $(ZLIBTARGZ)
 	rm -rf $(ZLIBDIR)
 	tar xzf $(ZLIBTARGZ)
-	cd $(ZLIBDIR) && CC="$(CC)" AR="$(AR)" RANLIB="$(RANLIB)" ./configure --static --prefix=$(LIBDIR)
+	cd $(ZLIBDIR) && CC="$(CC)" AR="$(AR)" RANLIB="$(RANLIB)" ./configure --shared --prefix=$(LIBDIR)
 	cd $(ZLIBDIR) && make && make install
-	$(RANLIB) $(LIBDIR)/lib/libz.a
 
 $(ZLIBFILES_FLRL): $(ZLIBTARGZ)
 	tar xzf $(ZLIBTARGZ)
@@ -350,10 +368,11 @@ $(ZLIBFILES_FLRL): $(ZLIBTARGZ)
 	cd $(ZLIBDIR) && make && make install
 	$(RANLIB) $(LIBDIR_FLRL)/lib/libz.a
 
+# (WIN64): Build SHARED library instead of STATIC
 $(JPEGFILES): $(JPEGTARGZ)
 	rm -rf $(JPEGDIR)
 	tar xzf $(JPEGTARGZ)
-	cd $(JPEGDIR) && CC="$(CC)" ./configure --disable-shared --host=$(CROSSPREFIX) --enable-static --prefix=$(LIBDIR) && make && make install
+	cd $(JPEGDIR) && CC="$(CC)" ./configure --enable-shared --host=$(CROSSPREFIX) --disable-static --prefix=$(LIBDIR) && make && make install
 
 $(JPEGFILES_FLRL): $(JPEGTARGZ)
 	rm -rf $(JPEGDIR)
@@ -365,9 +384,10 @@ $(FREETYPEFILES): $(FREETYPETARGZ)
 	tar xzf $(FREETYPETARGZ)
 	cd $(FREETYPEDIR) && CC="$(CC)" ./configure --with-png=no --with-harfbuzz=no --with-zlib=no --with-bzip2=no --with-brotli=no --enable-shared --host=$(CROSSPREFIX) --disable-static --prefix=$(LIBDIR) && make && make install
 
+# (WIN64): Build SHARED library instead of STATIC
 $(OPUSFILES): $(OPUSTARGZ)
 	tar xzf $(OPUSTARGZ)
-	cd $(OPUSDIR) && CC="$(CC)" AR="$(AR)" ./configure --enable-static --disable-shared --host=$(CROSSPREFIX) --prefix=$(LIBDIR) --disable-extra-programs && make && make install
+	cd $(OPUSDIR) && CC="$(CC)" AR="$(AR)" ./configure --disable-static --enable-shared --host=$(CROSSPREFIX) --prefix=$(LIBDIR) --disable-extra-programs && make && make install
 
 $(ASSIMPFILES): $(ASSIMPTARGZ)
 	rm -rf $(ASSIMPDIR)
@@ -376,6 +396,7 @@ $(ASSIMPFILES): $(ASSIMPTARGZ)
 	cd $(ASSIMPDIR)/ && CC="$(CC)" CXX="$(CXX)" $(CROSSCMAKE) -DBUILD_SHARED_LIBS=1 -DASSIMP_BUILD_TESTS=0 -DASSIMP_WARNINGS_AS_ERRORS=0 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_PREFIX=$(LIBDIR) -DCMAKE_CROSSCOMPILING=1
 	cd $(ASSIMPDIR)/ && make && make install
 
+# (WIN64): Build SHARED library instead of STATIC. This produces libvpx.dll and the import lib libvpx.dll.a
 $(LIBVPXFILES): $(LIBVPXTARGZ)
 	rm -rf $(LIBVPXDIR)
 	tar xzf $(LIBVPXTARGZ)
@@ -419,11 +440,13 @@ else
 	cd $(CURLDIR) && CC="$(CC) $(STATIC_CLIB)" ./configure --without-nghttp2 --without-ssl --without-gnutls --without-zlib --disable-ldap --enable-shared --host=$(CROSSPREFIX) --disable-static --prefix=$(LIBDIR) && make && make install
 endif
 
+# (WIN64): Build SHARED library instead of STATIC
 $(LIBOGGFILES): $(LIBOGGTARGZ)
 	rm -rf $(LIBOGGDIR)
 	tar xzf $(LIBOGGTARGZ)
-	cd $(LIBOGGDIR) && CC="$(CC)" ./configure --disable-shared --host=$(CROSSPREFIX) --enable-static --prefix=$(LIBDIR) && make && make install
+	cd $(LIBOGGDIR) && CC="$(CC)" ./configure --enable-shared --host=$(CROSSPREFIX) --disable-static --prefix=$(LIBDIR) && make && make install
 
+# (WIN64): Build SHARED library instead of STATIC
 $(LIBVORBISFILES): $(LIBVORBISTARGZ) $(LIBOGGFILES)
 	rm -rf $(LIBVORBISDIR)
 	tar xzf $(LIBVORBISTARGZ)
@@ -431,7 +454,7 @@ $(LIBVORBISFILES): $(LIBVORBISTARGZ) $(LIBOGGFILES)
 ifeq ($(DPTARGET),android)
 	sed -i.bak 's/-mno-ieee-fp//' $(LIBVORBISDIR)/configure
 endif
-	cd $(LIBVORBISDIR) && PKG_CONFIG_PATH="$(LIBDIR)/lib/pkgconfig" CC="$(CC)" CFLAGS="-I$(LIBDIR)/include" LDFLAGS="-L$(LIBDIR)/lib" ./configure --disable-shared --host=$(CROSSPREFIX) --enable-static --prefix=$(LIBDIR) && make && make install
+	cd $(LIBVORBISDIR) && PKG_CONFIG_PATH="$(LIBDIR)/lib/pkgconfig" CC="$(CC)" CFLAGS="-I$(LIBDIR)/include" LDFLAGS="-L$(LIBDIR)/lib" ./configure --enable-shared --host=$(CROSSPREFIX) --disable-static --prefix=$(LIBDIR) && make && make install
 
 $(LIBTHEORAFILES): $(LIBTHEORATARGZ) $(LIBOGGFILES)
 	rm -rf $(LIBTHEORADIR)
@@ -454,17 +477,19 @@ else
 endif
 endif
 
+# (WIN64): Build SHARED library instead of STATIC
 $(LIBMICROHTTPDFILES): $(LIBMICROHTTPDTARGZ)
 	rm -rf $(LIBMICROHTTPDDIR)
 	tar xzf $(LIBMICROHTTPDTARGZ)
-	cd $(LIBMICROHTTPDDIR) && CC="$(CC)" CFLAGS="-I$(LIBDIR)/include" LDFLAGS="-L$(LIBDIR)/lib" ./configure --disable-shared --host=$(CROSSPREFIX) --enable-static --disable-https --prefix=$(LIBDIR) && make && make install
+	cd $(LIBMICROHTTPDDIR) && CC="$(CC)" CFLAGS="-I$(LIBDIR)/include" LDFLAGS="-L$(LIBDIR)/lib" ./configure --enable-shared --host=$(CROSSPREFIX) --disable-static --disable-https --prefix=$(LIBDIR) && make && make install
 
+# (WIN64): Build SHARED library instead of STATIC
 $(SDLFILES): $(SDLTARGZ) $(SDLDEPS)
 	rm -rf $(SDLDIR)
 	tar xzf $(SDLTARGZ)
 	sed -i.bak 's/EXTRA_CFLAGS="$$EXTRA_CFLAGS -Wdeclaration-after-statement -Werror=declaration-after-statement"/EXTRA_CFLAGS="$$EXTRA_CFLAGS -Wdeclaration-after-statement"/' $(SDLDIR)/configure
 ifeq ($(DPTARGET_WIN),y)
-	cd $(SDLDIR) && CC="$(CC)" CXX="$(CXX)" host_os=mingw CFLAGS="-I$(LIBDIR)/include" LDFLAGS="-L$(LIBDIR)/lib" ./configure --host=$(CROSSPREFIX) --target=$(CROSSPREFIX) --enable-static --disable-shared --enable-libsamplerate --disable-libsamplerate-shared --disable-pthreads --prefix=$(LIBDIR)
+	cd $(SDLDIR) && CC="$(CC)" CXX="$(CXX)" host_os=mingw CFLAGS="-I$(LIBDIR)/include" LDFLAGS="-L$(LIBDIR)/lib" ./configure --host=$(CROSSPREFIX) --target=$(CROSSPREFIX) --disable-static --enable-shared --enable-libsamplerate --disable-libsamplerate-shared --disable-pthreads --prefix=$(LIBDIR)
 	cd $(SDLDIR) && make
 	cd $(SDLDIR) && make install
 else
@@ -584,6 +609,7 @@ else
 	install -m644 scripts/server-example.cfg Rexuiz/data/server-example.cfg
 endif
 
+#  (WIN64): Copy all the new DLLs into the final output directories.
 stand-alone-engine: engine $(EXTRALIBS)
 	mkdir -p Rexuiz/server
 ifeq ($(DPTARGET),android)
@@ -611,17 +637,20 @@ ifeq ($(ARCHSUFFIX),i686)
 endif
 ifeq ($(DPTARGET),win32)
 	mkdir -m755 -p Rexuiz/bin32
-	install -m644 $(CURLFILES) Rexuiz/bin32/
-	install -m644 $(FREETYPEFILES) Rexuiz/bin32/
+	install -m644 $(ALL_DLLS) Rexuiz/bin32/
 ifeq ($(ASSIMP_ENABLE),y)
+# Assimp has a custom name, handle it separately
 	install -m644 $(ASSIMPFILES) Rexuiz/bin32/libassimp-dprm.dll
 endif
 endif
 ifeq ($(DPTARGET),win64)
 	mkdir -m755 -p Rexuiz/bin64
-	install -m644 $(CURLFILES) Rexuiz/bin64/
-	install -m644 $(FREETYPEFILES) Rexuiz/bin64/
+# Install all DLLs defined in ALL_DLLS
+	for dll in $(ALL_DLLS); do \
+		if [ -f $$dll ]; then install -m644 $$dll Rexuiz/bin64/ ; fi \
+	done
 ifeq ($(ASSIMP_ENABLE),y)
+# Assimp has a custom name, handle it separately
 	install -m644 $(ASSIMPFILES) Rexuiz/bin64/libassimp-dprm.dll
 endif
 endif
