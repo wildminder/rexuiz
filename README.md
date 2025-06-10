@@ -56,7 +56,7 @@
 Rexuiz is a modernization of a beloved online shooter, Nexuiz Classic. Its history began about ten years ago when the developers at AlienTrap published a simple, but very exciting free online 3D shooter. It immediately attracted attention with its dynamic, intense, fast-paced gameplay and nice graphics. At the moment, the project is gaining momentum and we want to present it to you.
 
 ## Features
-- 2025-06-10
+- **2025-06-10**
   - Updated all dependencies
   - Resolved compilation issues
 
@@ -124,6 +124,9 @@ You will need to set up the MSYS2 environment to get the necessary toolchain and
         cd ..
         ```
     *   Verify the installation again with `which oggenc`.
+  
+> [!NOTE]
+> If you're experiencing trouble compiling Vorbis-Tool on Windows from the official repo, use this repo instead https://github.com/wildminder/vorbis-tools
 
 ### Installation and Build
 
