@@ -1,207 +1,248 @@
-Compiled flawlessly with SDL2-2.26.5.
-Also compiled with the latest SDL2-2.32.8, but starting from SDL 2.27, there are some issues with loading speed and freezes in the game menu — likely caused by the modern Windows API for gamepad/joystick input (Windows.Gaming.Input).
+<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+<a id="readme-top"></a>
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <!-- <a href="https://github.com/wildminder/rexuiz-neo">
+    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  </a> -->
+
+<h1 align="center">Rexuiz Neo</h1>
+
+  <p align="center">
+    A build system for Rexuiz.
+    <br />
+    <a href="https://github.com/wildminder/rexuiz-neo/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    &middot;
+    <a href="https://github.com/wildminder/rexuiz-neo/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+  </p>
+</div>
+
+<!-- PROJECT SHIELDS -->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+<!-- [![MIT License][license-shield]][license-url] -->
 
 
-**How to build**
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#about-the-project">About The Project</a></li>
+    <li>
+      <a href="#building-on-windows">Building on Windows</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation-and-build">Installation and Build</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#advanced-building-options">Advanced Building Options</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
 
-Building on Windows.
 
-**1: Setting up the Build Environment**
 
-1.  **Download MSYS2:**
-    *   Go to the MSYS2 official website: [https://www.msys2.org/](https://www.msys2.org/)
-    *   Download the `msys2-x86_64-*.exe` installer.
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-2.  **Install MSYS2:**
-    *   Run the installer. It's recommended to install it to a simple path like `C:\msys64`.
-    *   After installation, do **not** immediately close the final installer window if it offers to run MSYS2. If it doesn't, find "MSYS2 MSYS" in your Start Menu and run it.
+Rexuiz is a modernization of a beloved online shooter, Nexuiz Classic. Its history began about ten years ago when the developers at AlienTrap published a simple, but very exciting free online 3D shooter. It immediately attracted attention with its dynamic, intense, fast-paced gameplay and nice graphics. At the moment, the project is gaining momentum and we want to present it to you.
 
-3.  **Update MSYS2 Core Packages:**
-    *   In the "MSYS2 MSYS" terminal window that opens, first update the package database and core system packages:
+**Technical Notes:**
+*   Compiled flawlessly with SDL2-2.26.5.
+*   Also compiles with the latest SDL2-2.32.8, but starting from SDL 2.27, there are some issues with loading speed and freezes in the game menu — likely caused by the modern Windows API for gamepad/joystick input (Windows.Gaming.Input).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- GETTING STARTED -->
+## Building on Windows
+
+This guide will walk you through setting up a local development environment on Windows to build the project.
+
+### Prerequisites
+
+You will need to set up the MSYS2 environment to get the necessary toolchain and libraries.
+
+1.  **Download and Install MSYS2**
+    *   Go to the [MSYS2 official website](https://www.msys2.org/) and download the `msys2-x86_64-*.exe` installer.
+    *   Run the installer. It's recommended to use a simple path like `C:\msys64`.
+    *   After installation, run "MSYS2 MSYS" from your Start Menu.
+
+2.  **Update MSYS2 Core Packages**
+    *   In the "MSYS2 MSYS" terminal, update the package database and core packages. You may need to do this multiple times.
         ```bash
         pacman -Syu
         ```
-    *   It might ask you to close the terminal. If it says `warning: terminate MSYS2 without returning to shell and check for updates again`, close the MSYS2 window (`exit` or click the X), then re-open "MSYS2 MSYS" from the Start Menu and run the command again:
+    *   If prompted to close the terminal, do so, then re-open "MSYS2 MSYS" and run the command again until it reports no more updates.
+
+3.  **Install MinGW-w64 Toolchain and Build Tools**
+    *   Open the **"MSYS2 MinGW 64-bit"** terminal from your Start Menu.
+    *   Install the required toolchain and developer tools:
         ```bash
-        pacman -Syu
+        pacman -S --needed base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-wget \
+            mingw-w64-x86_64-libzip \
+            patch \
+            zip \
+            unzip \
+            p7zip \
+            mingw-w64-x86_64-imagemagick \
+            mingw-w64-x86_64-libvorbis \
+            mingw-w64-x86_64-yasm \
+            mingw-w64-x86_64-autotools \
+            mingw-w64-x86_64-openssl \
+            vim
         ```
-    *   Repeat this process (close, reopen, `pacman -Syu`) until it says there are no more updates.
-	*   Close the "MSYS2 MSYS" terminal.
+    *   Press `Enter` to select all default packages and `Y` to confirm the installation.
 
-4.  **Install the MinGW-w64 Toolchain and Build Tools:**
-    *   Open the **"MSYS2 MinGW 64-bit"** terminal from your Start Menu. And sets up the environment for 64-bit MinGW compilation.
-    *   Install the 64-bit MinGW-w64 toolchain (GCC, G++, make, etc.) and other necessary tools:
-        ```bash
-		pacman -S --needed base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-wget \
-			mingw-w64-x86_64-libzip \
-			patch \
-			zip \
-			unzip \
-			p7zip \
-			mingw-w64-x86_64-imagemagick \
-			mingw-w64-x86_64-libvorbis \
-			mingw-w64-x86_64-yasm \
-			mingw-w64-x86_64-autotools \
-			mingw-w64-x86_64-openssl \
-			vim
-        ```
-    *   Press Enter to select all packages in the `mingw-w64-x86_64-toolchain` group when prompted.
-    *   Confirm the installation by typing `Y` when asked.
-
-5.  **Verify Installation (Optional):**
-    *   In the "MSYS2 MinGW 64-bit" terminal, check if the tools are available:
-        ```bash
-        gcc --version
-        g++ --version
-        make --version
-        cmake --version
-        wget --version
-        ```
-    They should report their versions.
-
-
-6. **Compile vorbis-tools from source**
-	*	Check your system for `vorbis-tools`
+4.  **Compile `vorbis-tools` from source (if needed)**
+    *   First, check if `oggenc` is available:
         ```bash
         which oggenc
-        ```	
-			
-		If you can't find the `oggenc`, you could compile vorbis-tools from source within your MSYS2 MinGW. Download the vorbis-tools source		
+        ```
+    *   If not found, clone and compile it from source within the "MSYS2 MinGW 64-bit" terminal:
         ```bash
         git clone https://github.com/xiph/vorbis-tools
         cd vorbis-tools
-        ```
-	*   In the "MSYS2 MinGW 64-bit" terminal:
-        ```bash
         AUTOMAKE_FLAGS=--include-deps ./autogen.sh
-		./configure --prefix=/mingw64 
-		make
-		make install		
-        ```	
-		`--prefix=/mingw64` - to install it into your MinGW64 tree.
-
-	*	Check again for `vorbis-tools`. It should point the folder with oggenc
-        ```bash
-        which oggenc
-        ```	
-	* If something went wrong, try to clean to clean-up the `vorbis-tools` folder:
-        ```bash
-        make clean
-		make maintainer-clean
-        ```	
-		
-**2: Getting the Rexuiz Project Files**
-
-0.	**nexuiz-252.zip**. If downloading failed, get this file from the [sourceforge](https://sourceforge.net/projects/nexuiz/files/)
-	
-1.  **Clone or Download the Project:**
-    *   If you have Git installed on Windows or within MSYS2 (`pacman -S git`), you can clone it. In the terminal:
-        ```bash
-        git clone --recurse-submodules -j8 https://github.com/wildminder/rexuiz-neo rexuiz-source
-        cd rexuiz-source
+        ./configure --prefix=/mingw64 
+        make
+        make install
+        cd ..
         ```
-		you need to use `--recurse-submodules` to get all submodules
+    *   Verify the installation again with `which oggenc`.
 
-**3: Building Rexuiz**
+### Installation and Build
 
-1.  **Navigate to the Project Directory:**
-    *   Make sure you are in the `rexuiz-source` directory within the **"MSYS2 MinGW 64-bit"** terminal.
+With the environment set up, you can now clone and build the project.
 
-2.  **Run the Make Command:**
-    *   The Makefile is designed to detect `win64` as a target. Since you are already in a MinGW 64-bit environment, you don't need to specify `CROSSPREFIX`.
-    *   Execute the build:
-        ```bash
-        make DPTARGET=win64
-        ```
-    *   Warning. Building the whole project will take a **long time**, especially the first time, as it will:
-        *   Download dependencies (SDL2, libpng, libjpeg, freetype, curl, etc.) using `wget`.
-        *   Configure and compile each dependency for MinGW-w64.
-        *   Build `gmqcc`.
-        *   Compile QuakeC game logic.
-        *   Build the DarkPlacesRM engine.
-        *   Re-package game data.
+1.  **Get Game Data**
+    *   The build script will attempt to download `nexuiz-252.zip`. If this fails, please download it manually from [SourceForge](https://sourceforge.net/projects/nexuiz/files/) and place it in the project's root directory.
 
-**4: Running the Game**
-    
+2.  **Clone the Repository**
+    *   Clone the project and its submodules. Make sure you are in the **"MSYS2 MinGW 64-bit"** terminal.
+       ```sh
+       git clone --recurse-submodules -j8 https://github.com/wildminder/rexuiz-neo.git rexuiz-source
+       cd rexuiz-source
+       ```
+
+3.  **Build the Project**
+    *   Execute the make command. This will download dependencies, compile tools, and build the entire game. Be patient, as this can take a long time.
+       ```sh
+       make DPTARGET=win64
+       ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- USAGE EXAMPLES -->
+## Usage
+
 *   After a successful build, the compiled game and data will be in a subdirectory named `Rexuiz` within your project folder (e.g., `C:\projects\rexuiz-source\Rexuiz`).
-*   The main executable will likely be `Rexuiz\rexuiz-sdl-x86_64.exe`.
-*   Required DLLs (like `libcurl-4.dll`, `libfreetype-6.dll`) will be in `Rexuiz\bin64\`. The game engine should be able to find these.
-*   `libwinpthread-1.dll` if this dll is missing, copy it manually from `msys64\mingw64\bin`
-	
-**5. Building the Launcher (Optional):**
+*   The main executable is `Rexuiz\rexuiz-sdl-x86_64.exe`.
+*   Required DLLs will be in `Rexuiz\bin64\`. The game engine should find these automatically.
+*   If `libwinpthread-1.dll` is missing, copy it manually from your `msys64\mingw64\bin` directory into the `Rexuiz` game folder.
 
-The project includes an FLTK-based launcher (`flrexuizlauncher`). You can build it separately if needed.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- ADVANCED BUILDING -->
+## Advanced Building Options
+
+### Building Only the Game Engine (DarkPlacesRM)
+
+If you only want to recompile the game engine without rebuilding the entire project:
+
+1.  Navigate to the root `rexuiz-source` directory in your "MSYS2 MinGW 64-bit" terminal.
+2.  Run the `engine` make target:
+    ```bash    
+    make engine DPTARGET=win64
+    ```
+3.  The newly compiled `rexuiz-sdl-x86_64.exe` will be located in the `DarkPlacesRM/` directory. You can copy this executable to your existing game distribution to update it.
+
+### Building the Launcher (Optional)
+
+The project includes an FLTK-based launcher that can be built separately.
 
 *   **For Linux/macOS:**
     ```bash
     make flrexuizlauncher
     ```
-*   **For Windows (cross-compilation from Linux):**
-    *   32-bit:
-        ```bash
-        make flrexuizlauncher DPTARGET=win32
-        ```
-    *   64-bit:
-        ```bash
-        make flrexuizlauncher DPTARGET=win64
-        ```
-    The compiled launcher will be placed in the `Rexuiz/` directory with a platform/architecture-specific name (e.g., `RexuizLauncher.Linux-x86_64`, `RexuizLauncher.Windows-x86_64.exe`, or inside the macOS app bundle for the launcher).
-
-
-**DarkPlacesRM**
-
-Remember, `rexuiz-sdl-x86_64.exe` is the game engine. `RexuizLauncher.Windows-x86_64.exe` is the launcher. Your engine modifications will affect the former. The launcher will simply execute whatever `rexuiz-sdl-x86_64.exe` it finds.
-
-*   You can build just the Engine. It will take less time then compiling the whole project. You can then take this newly compiled executable and place/replace the existing `rexuiz-sdl-x86_64.exe` in your pre-compiled Rexuiz game distribution (You can name it whatever you like).
-
-1.  **Navigate to the Root Project Directory:**
-    `cd /path/to/rexuiz-source`
-
-2.  **Recompile the Engine:**
-    From the root `rexuiz-source` directory, you can use the specific `engine` target from the main `Makefile`. This target is designed to build the engine and its immediate dependencies. In your MSYS2 MinGW 64-bit terminal.
-    ```bash    
-    make engine DPTARGET=win64
+*   **For Windows (from MSYS2/MinGW):**
+    ```bash
+    make flrexuizlauncher DPTARGET=win64
     ```
-    
-	This command will:
-    *   Go into `DarkPlacesRM/`.
-    *   Execute the make command defined by `DPMAKEOPTS` to build `sdl-rexuiz`.
-    *   The output `rexuiz-sdl-x86_64.exe` will be in the `DarkPlacesRM/` directory.
+The compiled launcher will be placed in the `Rexuiz/` directory.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Troubleshooting
+
+*   **CMakeCache.txt is different than the directory:**
+    This error occurs when CMake's cache points to old paths. To fix it, navigate to the `gmqcc` subdirectory and clean the CMake files before rebuilding.
+    ```bash
+    cd gmqcc
+    rm -f CMakeCache.txt
+    rm -rf CMakeFiles/ Makefile cmake_install.cmake
+    cd ..
+    make DPTARGET=win64
+    ```
+
+*   **Cleaning the Build:**
+    If you need to start over, you can clean previous build artifacts for the Windows target:
+    ```bash
+    make clean DPTARGET=win64
+    ```
+
+*   **Disk Space:**
+    Ensure you have at least 10GB of free disk space for MSYS2, the toolchain, project sources, and compiled binaries.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-**Important Considerations and Troubleshooting:**
+<!-- CONTRIBUTING -->
+## Contributing
 
-*   **Cleaning:** If you need to rebuild, you can use `make clean DPTARGET=win64` to clean up previous build artifacts for the Windows target.
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-*   **/gmqcc/CMakeCache.txt is different than the directory**
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
 
-    You need to remove the old CMake configuration files from the `gmqcc` directory so that CMake can reconfigure itself with the new correct paths.
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
 
-    a.  **Navigate to the `gmqcc` directory** within your MSYS2 MinGW 64-bit terminal:
-        ```bash
-        cd gmqcc
-        ```
-
-    b.  **Remove CMake generated files** inside gmqcc (CMakeCache.txt, CMakeFiles/, Makefile, cmake_install.cmake):
-        ```bash
-        rm -f CMakeCache.txt
-        rm -rf CMakeFiles/
-        rm -f Makefile
-        rm -f cmake_install.cmake
-        ```
-
-    c.  **Go back to the project root:**
-        ```bash
-        cd ..
-        ```
-
-    d.  **Try the build again:**
-        Now, run your `make` command from the project root.
-        ```bash
-        make DPTARGET=win64
-        ```
-       
-*   **Disk Space:** Ensure you have enough free disk space for MSYS2, the toolchain, project sources, and compiled libraries/binaries. At least 10Gb
-*   **Build Time:** Be patient. Compiling everything from scratch can take a long time.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+*   The original developers of Nexuiz Classic at AlienTrap.
+*   The original developer is https://github.com/kasymovga/rexuiz
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors/wildminder/rexuiz-neo.svg?style=flat
+[contributors-url]: https://github.com/wildminder/rexuiz-neo/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/wildminder/rexuiz-neo.svg?style=flat
+[forks-url]: https://github.com/wildminder/rexuiz-neo/network/members
+[stars-shield]: https://img.shields.io/github/stars/wildminder/rexuiz-neo.svg?style=flat
+[stars-url]: https://github.com/wildminder/rexuiz-neo/stargazers
+[issues-shield]: https://img.shields.io/github/issues/wildminder/rexuiz-neo.svg?style=flat
+[issues-url]: https://github.com/wildminder/rexuiz-neo/issues
+<!-- [license-shield]: https://img.shields.io/github/license/wildminder/rexuiz-neo.svg?style=flat -->
+<!-- [license-url]: https://github.com/wildminder/rexuiz-neo/blob/master/LICENSE.txt -->
